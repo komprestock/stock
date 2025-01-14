@@ -53,7 +53,7 @@ print("Dane zostały zapisane w bazie danych SQLite jako tabela 'produkty'.")
 # Połączenie z bazą SQLite
 conn = sqlite3.connect("produkty.db")
 
-# Wczytanie danych z bazy (na potrzeby dynamicznych wartości filtrów)
+# Wczytanie danych z bazy
 df = pd.read_sql_query("SELECT * FROM produkty", conn)
 
 # Tytuł aplikacji
@@ -68,43 +68,36 @@ max_price = st.slider("Maksymalna cena", int(df['price'].min()), int(df['price']
 stock_filter = st.checkbox("Pokaż tylko produkty dostępne na stanie (stock > 0)")
 
 # 3. Filtr po kategorii
-category = st.selectbox("Wybierz kategorię", options=["Wszystkie"] + df['category'].unique().tolist())
+category = st.selectbox("Wybierz kategorię", options=["Wszystkie"] + df['category'].dropna().unique().tolist())
 
-# 4. Filtr po nazwie produktu
-product_name = st.text_input("Szukaj produktu (fragment nazwy):", "")
-
-# 5. Filtr po pamięci RAM
+# 4. Filtr po pamięci RAM
 ram = st.selectbox("Wybierz pamięć RAM", options=["Wszystkie"] + df['ram'].dropna().unique().tolist())
 
-# 6. Filtr po wielkości ekranu
+# 5. Filtr po wielkości ekranu
 screen_size = st.selectbox("Wybierz wielkość ekranu", options=["Wszystkie"] + df['screen_size'].dropna().unique().tolist())
 
-# 7. Filtr po rozdzielczości
+# 6. Filtr po rozdzielczości
 resolution = st.selectbox("Wybierz rozdzielczość ekranu", options=["Wszystkie"] + df['resolution'].dropna().unique().tolist())
 
-# 8. Filtr po serii procesora
+# 7. Filtr po serii procesora
 processor_series = st.selectbox("Wybierz serię procesora", options=["Wszystkie"] + df['processor_series'].dropna().unique().tolist())
 
-# 9. Filtr po procesorze
+# 8. Filtr po procesorze
 processor = st.selectbox("Wybierz procesor", options=["Wszystkie"] + df['processor'].dropna().unique().tolist())
 
-# 10. Filtr po ekranie dotykowym
+# 9. Filtr po ekranie dotykowym
 touchscreen = st.selectbox("Ekran dotykowy", options=["Wszystkie", "Tak", "Nie"])
 
-# 11. Filtr po liczbie rdzeni
+# 10. Filtr po liczbie rdzeni
 cores = st.selectbox("Wybierz liczbę rdzeni", options=["Wszystkie"] + df['cores'].dropna().unique().tolist())
 
-# Budowanie zapytania SQL na podstawie filtrów
-query = f"""
-SELECT * FROM produkty
-WHERE price BETWEEN {min_price} AND {max_price}
-"""
+# Budowanie zapytania SQL na podstawie aktywnych filtrów
+query = f"SELECT * FROM produkty WHERE price BETWEEN {min_price} AND {max_price}"
+
 if stock_filter:
     query += " AND stock > 0"
 if category != "Wszystkie":
     query += f" AND category = '{category}'"
-if product_name:
-    query += f" AND name LIKE '%{product_name}%'"
 if ram != "Wszystkie":
     query += f" AND ram = '{ram}'"
 if screen_size != "Wszystkie":
@@ -124,13 +117,16 @@ if cores != "Wszystkie":
 filtered_data = pd.read_sql_query(query, conn)
 
 # Wyświetlanie wyników
-st.subheader("Wyniki filtrowania:")
-st.dataframe(filtered_data)
+if filtered_data.empty:
+    st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
+else:
+    st.subheader("Wyniki filtrowania:")
+    st.dataframe(filtered_data)
 
-# Eksport do Excela
-if st.button("Eksportuj do Excela"):
-    filtered_data.to_excel("filtrowane_produkty.xlsx", index=False)
-    st.success("Plik został zapisany jako 'filtrowane_produkty.xlsx'")
+    # Eksport do Excela
+    if st.button("Eksportuj do Excela"):
+        filtered_data.to_excel("filtrowane_produkty.xlsx", index=False)
+        st.success("Plik został zapisany jako 'filtrowane_produkty.xlsx'")
 
 # Zamknięcie połączenia z bazą
 conn.close()
