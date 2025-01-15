@@ -95,7 +95,10 @@ if processor_series != "Wszystkie":
 if processor != "Wszystkie":
     query += f" AND processor = '{processor}'"
 if touchscreen != "Wszystkie":
-    query += f" AND touchscreen = '{touchscreen}'"
+    if touchscreen == "Tak":
+        query += " AND touchscreen = 'Tak'"
+    elif touchscreen == "Nie":
+        query += " AND touchscreen = 'Nie'"
 if cores != "Wszystkie":
     query += f" AND cores = '{cores}'"
 
