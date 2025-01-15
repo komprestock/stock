@@ -99,12 +99,12 @@ if processor_series != "Wszystkie":
 if processor != "Wszystkie":
     query += f" AND processor = '{processor}'"
 if touchscreen != "Wszystkie":
-    if touchscreen == "Tak":
-        query += " AND touchscreen = 'Tak'"
-    elif touchscreen == "Nie":
-        query += " AND touchscreen = 'Nie'"
+    query += f" AND touchscreen = '{touchscreen}'"
 if cores != "Wszystkie":
     query += f" AND cores = '{cores}'"
+
+# Wyświetlenie zapytania SQL
+st.write("Zapytanie SQL:", query)
 
 # Pobranie danych po zastosowaniu filtrów
 filtered_data = pd.read_sql_query(query, conn)
