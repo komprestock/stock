@@ -37,6 +37,9 @@ for item in root.findall('o'):
         "processor": attrs.get("Procesor", "").strip(),
         "touchscreen": attrs.get("Ekran dotykowy", "Nie").strip(),
         "cores": attrs.get("Ilość rdzeni", "").strip(),
+        "condition": attrs.get("Kondycja", "").strip(),  # Nowa wartość
+        "screen_condition": attrs.get("Stan ekranu", "").strip(),  # Nowa wartość
+        "case_condition": attrs.get("Stan obudowy", "").strip(),  # Nowa wartość
     }
     data.append(record)
 
@@ -117,7 +120,7 @@ else:
     filtered_data = filtered_data[[
         'id', 'name', 'price', 'stock', 'ram', 'processor_series',
         'cores', 'processor', 'screen_size', 'resolution',
-        'touchscreen', 'category', 'url'
+        'touchscreen', 'category', 'condition', 'screen_condition', 'case_condition', 'url'
     ]]
     
     # Wyświetlanie tabeli
