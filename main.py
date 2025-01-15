@@ -34,7 +34,7 @@ for item in root.findall('o'):
         "resolution": attrs.get("Rozdzielczość ekranu"),
         "processor_series": attrs.get("Seria procesora"),
         "processor": attrs.get("Procesor"),
-        "touchscreen": attrs.get("Ekran dotykowy"),
+        "touchscreen": attrs.get("Ekran dotykowy", "Nie"),  # Domyślna wartość "Nie"
         "cores": attrs.get("Ilość rdzeni"),
     }
     data.append(record)
@@ -53,6 +53,10 @@ conn = sqlite3.connect("produkty.db")
 
 # Wczytanie danych z bazy
 df = pd.read_sql_query("SELECT * FROM produkty", conn)
+
+# Podgląd danych dla debugowania
+st.write("Podgląd danych:")
+st.dataframe(df[['name', 'touchscreen']].head(10))
 
 # Tytuł aplikacji
 st.title("Interaktywne filtrowanie produktów")
@@ -110,7 +114,7 @@ st.header("Wyniki filtrowania")
 if filtered_data.empty:
     st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
 else:
-    # Wyświetlanie tabeli (RAM pozostaje w tabeli)
+    # Wyświetlanie tabeli
     st.dataframe(filtered_data, use_container_width=True)
     
     # Eksport do Excela
