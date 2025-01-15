@@ -113,6 +113,13 @@ st.header("Wyniki filtrowania")
 if filtered_data.empty:
     st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
 else:
+    # Reorganizacja kolumn w tabeli
+    filtered_data = filtered_data[[
+        'id', 'name', 'price', 'stock', 'ram', 'processor_series',
+        'cores', 'processor', 'screen_size', 'resolution',
+        'touchscreen', 'category', 'url'
+    ]]
+    
     # Wyświetlanie tabeli
     st.dataframe(filtered_data, use_container_width=True)
     
