@@ -54,10 +54,6 @@ conn = sqlite3.connect("produkty.db")
 # Wczytanie danych z bazy
 df = pd.read_sql_query("SELECT * FROM produkty", conn)
 
-# Podgląd danych dla debugowania
-st.write("Podgląd danych:")
-st.dataframe(df[['name', 'touchscreen']].head(10))
-
 # Tytuł aplikacji
 st.title("Interaktywne filtrowanie produktów")
 
@@ -83,6 +79,9 @@ with col4:
     touchscreen = st.selectbox("Ekran dotykowy", options=["Wszystkie", "Tak", "Nie"])
     cores = st.selectbox("Rdzenie", options=["Wszystkie"] + df['cores'].dropna().unique().tolist())
 
+# Pole do wyszukiwania nazwy produktu
+product_name = st.text_input("Wpisz fragment nazwy produktu:")
+
 # Budowanie zapytania SQL na podstawie aktywnych filtrów
 query = f"SELECT * FROM produkty WHERE price BETWEEN {min_price} AND {max_price}"
 
@@ -102,9 +101,8 @@ if touchscreen != "Wszystkie":
     query += f" AND TRIM(touchscreen) = '{touchscreen}'"
 if cores != "Wszystkie":
     query += f" AND cores = '{cores}'"
-
-# Wyświetlenie zapytania SQL
-st.write("Zapytanie SQL:", query)
+if product_name:
+    query += f" AND name LIKE '%{product_name}%'"
 
 # Pobranie danych po zastosowaniu filtrów
 filtered_data = pd.read_sql_query(query, conn)
