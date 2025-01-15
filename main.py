@@ -12,8 +12,8 @@ response = requests.get(url)
 if response.status_code == 200:
     xml_data = response.content
 else:
-    print(f"Błąd podczas pobierania pliku: {response.status_code}")
-    exit()
+    st.error(f"Błąd podczas pobierania pliku: {response.status_code}")
+    st.stop()
 
 # Wczytanie XML do struktury drzewa
 root = ET.fromstring(xml_data)
@@ -47,8 +47,6 @@ conn = sqlite3.connect("produkty.db")
 df.to_sql("produkty", conn, if_exists="replace", index=False)
 conn.close()
 
-print("Dane zostały zapisane w bazie danych SQLite jako tabela 'produkty'.")
-
 # Streamlit - interaktywna aplikacja
 # Połączenie z bazą SQLite
 conn = sqlite3.connect("produkty.db")
@@ -59,37 +57,40 @@ df = pd.read_sql_query("SELECT * FROM produkty", conn)
 # Tytuł aplikacji
 st.title("Interaktywne filtrowanie produktów")
 
-# Filtry
-# 1. Filtr po cenie
-min_price = st.slider("Minimalna cena", int(df['price'].min()), int(df['price'].max()), int(df['price'].min()))
-max_price = st.slider("Maksymalna cena", int(df['price'].min()), int(df['price'].max()), int(df['price'].max()))
+# Responsywny układ: filtry w jednej kolumnie, tabela w drugiej
+col1, col2 = st.columns([1, 2])  # Pierwsza kolumna węższa, druga szersza
 
-# 2. Filtr po dostępności na stanie
-stock_filter = st.checkbox("Pokaż tylko produkty dostępne na stanie (stock > 0)")
-
-# 3. Filtr po kategorii
-category = st.selectbox("Wybierz kategorię", options=["Wszystkie"] + df['category'].dropna().unique().tolist())
-
-# 4. Filtr po pamięci RAM
-ram = st.selectbox("Wybierz pamięć RAM", options=["Wszystkie"] + df['ram'].dropna().unique().tolist())
-
-# 5. Filtr po wielkości ekranu
-screen_size = st.selectbox("Wybierz wielkość ekranu", options=["Wszystkie"] + df['screen_size'].dropna().unique().tolist())
-
-# 6. Filtr po rozdzielczości
-resolution = st.selectbox("Wybierz rozdzielczość ekranu", options=["Wszystkie"] + df['resolution'].dropna().unique().tolist())
-
-# 7. Filtr po serii procesora
-processor_series = st.selectbox("Wybierz serię procesora", options=["Wszystkie"] + df['processor_series'].dropna().unique().tolist())
-
-# 8. Filtr po procesorze
-processor = st.selectbox("Wybierz procesor", options=["Wszystkie"] + df['processor'].dropna().unique().tolist())
-
-# 9. Filtr po ekranie dotykowym
-touchscreen = st.selectbox("Ekran dotykowy", options=["Wszystkie", "Tak", "Nie"])
-
-# 10. Filtr po liczbie rdzeni
-cores = st.selectbox("Wybierz liczbę rdzeni", options=["Wszystkie"] + df['cores'].dropna().unique().tolist())
+# Sekcja filtrów
+with col1:
+    st.header("Filtry")
+    
+    # Filtr po cenie
+    min_price = st.slider("Minimalna cena", int(df['price'].min()), int(df['price'].max()), int(df['price'].min()))
+    max_price = st.slider("Maksymalna cena", int(df['price'].min()), int(df['price'].max()), int(df['price'].max()))
+    
+    # Filtr po dostępności na stanie
+    stock_filter = st.checkbox("Pokaż tylko produkty dostępne na stanie (stock > 0)")
+    
+    # Filtr po kategorii
+    category = st.selectbox("Wybierz kategorię", options=["Wszystkie"] + df['category'].dropna().unique().tolist())
+    
+    # Filtr po wielkości ekranu
+    screen_size = st.selectbox("Wybierz wielkość ekranu", options=["Wszystkie"] + df['screen_size'].dropna().unique().tolist())
+    
+    # Filtr po rozdzielczości
+    resolution = st.selectbox("Wybierz rozdzielczość ekranu", options=["Wszystkie"] + df['resolution'].dropna().unique().tolist())
+    
+    # Filtr po serii procesora
+    processor_series = st.selectbox("Wybierz serię procesora", options=["Wszystkie"] + df['processor_series'].dropna().unique().tolist())
+    
+    # Filtr po procesorze
+    processor = st.selectbox("Wybierz procesor", options=["Wszystkie"] + df['processor'].dropna().unique().tolist())
+    
+    # Filtr po ekranie dotykowym
+    touchscreen = st.selectbox("Ekran dotykowy", options=["Wszystkie", "Tak", "Nie"])
+    
+    # Filtr po liczbie rdzeni
+    cores = st.selectbox("Wybierz liczbę rdzeni", options=["Wszystkie"] + df['cores'].dropna().unique().tolist())
 
 # Budowanie zapytania SQL na podstawie aktywnych filtrów
 query = f"SELECT * FROM produkty WHERE price BETWEEN {min_price} AND {max_price}"
@@ -98,8 +99,6 @@ if stock_filter:
     query += " AND stock > 0"
 if category != "Wszystkie":
     query += f" AND category = '{category}'"
-if ram != "Wszystkie":
-    query += f" AND ram = '{ram}'"
 if screen_size != "Wszystkie":
     query += f" AND screen_size = '{screen_size}'"
 if resolution != "Wszystkie":
@@ -116,17 +115,19 @@ if cores != "Wszystkie":
 # Pobranie danych po zastosowaniu filtrów
 filtered_data = pd.read_sql_query(query, conn)
 
-# Wyświetlanie wyników
-if filtered_data.empty:
-    st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
-else:
-    st.subheader("Wyniki filtrowania:")
-    st.dataframe(filtered_data)
-
-    # Eksport do Excela
-    if st.button("Eksportuj do Excela"):
-        filtered_data.to_excel("filtrowane_produkty.xlsx", index=False)
-        st.success("Plik został zapisany jako 'filtrowane_produkty.xlsx'")
+# Sekcja tabeli wyników
+with col2:
+    st.header("Wyniki filtrowania")
+    if filtered_data.empty:
+        st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
+    else:
+        # Wyświetlanie tabeli (RAM pozostaje w tabeli)
+        st.dataframe(filtered_data, use_container_width=True)
+        
+        # Eksport do Excela
+        if st.button("Eksportuj do Excela"):
+            filtered_data.to_excel("filtrowane_produkty.xlsx", index=False)
+            st.success("Plik został zapisany jako 'filtrowane_produkty.xlsx'")
 
 # Zamknięcie połączenia z bazą
 conn.close()
