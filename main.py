@@ -59,7 +59,7 @@ conn = sqlite3.connect("produkty.db")
 df = pd.read_sql_query("SELECT * FROM produkty", conn)
 
 # Tytuł aplikacji
-st.title("Interaktywne filtrowanie produktów")
+st.title("Interaktywne filtrowanie produktów kompre.pl")
 
 # Filtry w układzie wielu kolumn
 st.header("Filtry")
