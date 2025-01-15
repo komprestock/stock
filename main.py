@@ -37,9 +37,9 @@ for item in root.findall('o'):
         "processor": attrs.get("Procesor", "").strip(),
         "touchscreen": attrs.get("Ekran dotykowy", "Nie").strip(),
         "cores": attrs.get("Ilość rdzeni", "").strip(),
-        "condition": attrs.get("Kondycja", "").strip(),  # Nowa wartość
-        "screen_condition": attrs.get("Stan ekranu", "").strip(),  # Nowa wartość
-        "case_condition": attrs.get("Stan obudowy", "").strip(),  # Nowa wartość
+        "condition": attrs.get("Kondycja", "").strip(),
+        "screen_condition": attrs.get("Stan ekranu", "").strip(),
+        "case_condition": attrs.get("Stan obudowy", "").strip(),
     }
     data.append(record)
 
@@ -122,6 +122,9 @@ else:
         'cores', 'processor', 'screen_size', 'resolution',
         'touchscreen', 'category', 'condition', 'screen_condition', 'case_condition', 'url'
     ]]
+    
+    # Wyświetlanie liczby pozycji
+    st.write(f"Liczba pozycji: {len(filtered_data)}")
     
     # Wyświetlanie tabeli
     st.dataframe(filtered_data, use_container_width=True)
