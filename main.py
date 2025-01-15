@@ -57,40 +57,27 @@ df = pd.read_sql_query("SELECT * FROM produkty", conn)
 # Tytuł aplikacji
 st.title("Interaktywne filtrowanie produktów")
 
-# Responsywny układ: filtry w jednej kolumnie, tabela w drugiej
-col1, col2 = st.columns([1, 2])  # Pierwsza kolumna węższa, druga szersza
+# Filtry w układzie wielu kolumn
+st.header("Filtry")
+col1, col2, col3, col4 = st.columns(4)
 
-# Sekcja filtrów
 with col1:
-    st.header("Filtry")
-    
-    # Filtr po cenie
     min_price = st.slider("Minimalna cena", int(df['price'].min()), int(df['price'].max()), int(df['price'].min()))
     max_price = st.slider("Maksymalna cena", int(df['price'].min()), int(df['price'].max()), int(df['price'].max()))
-    
-    # Filtr po dostępności na stanie
-    stock_filter = st.checkbox("Pokaż tylko produkty dostępne na stanie (stock > 0)")
-    
-    # Filtr po kategorii
-    category = st.selectbox("Wybierz kategorię", options=["Wszystkie"] + df['category'].dropna().unique().tolist())
-    
-    # Filtr po wielkości ekranu
-    screen_size = st.selectbox("Wybierz wielkość ekranu", options=["Wszystkie"] + df['screen_size'].dropna().unique().tolist())
-    
-    # Filtr po rozdzielczości
-    resolution = st.selectbox("Wybierz rozdzielczość ekranu", options=["Wszystkie"] + df['resolution'].dropna().unique().tolist())
-    
-    # Filtr po serii procesora
-    processor_series = st.selectbox("Wybierz serię procesora", options=["Wszystkie"] + df['processor_series'].dropna().unique().tolist())
-    
-    # Filtr po procesorze
-    processor = st.selectbox("Wybierz procesor", options=["Wszystkie"] + df['processor'].dropna().unique().tolist())
-    
-    # Filtr po ekranie dotykowym
+
+with col2:
+    stock_filter = st.checkbox("Dostępne (stock > 0)")
+    category = st.selectbox("Kategoria", options=["Wszystkie"] + df['category'].dropna().unique().tolist())
+
+with col3:
+    screen_size = st.selectbox("Rozmiar ekranu", options=["Wszystkie"] + df['screen_size'].dropna().unique().tolist())
+    resolution = st.selectbox("Rozdzielczość", options=["Wszystkie"] + df['resolution'].dropna().unique().tolist())
+
+with col4:
+    processor_series = st.selectbox("Seria procesora", options=["Wszystkie"] + df['processor_series'].dropna().unique().tolist())
+    processor = st.selectbox("Procesor", options=["Wszystkie"] + df['processor'].dropna().unique().tolist())
     touchscreen = st.selectbox("Ekran dotykowy", options=["Wszystkie", "Tak", "Nie"])
-    
-    # Filtr po liczbie rdzeni
-    cores = st.selectbox("Wybierz liczbę rdzeni", options=["Wszystkie"] + df['cores'].dropna().unique().tolist())
+    cores = st.selectbox("Rdzenie", options=["Wszystkie"] + df['cores'].dropna().unique().tolist())
 
 # Budowanie zapytania SQL na podstawie aktywnych filtrów
 query = f"SELECT * FROM produkty WHERE price BETWEEN {min_price} AND {max_price}"
@@ -115,19 +102,18 @@ if cores != "Wszystkie":
 # Pobranie danych po zastosowaniu filtrów
 filtered_data = pd.read_sql_query(query, conn)
 
-# Sekcja tabeli wyników
-with col2:
-    st.header("Wyniki filtrowania")
-    if filtered_data.empty:
-        st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
-    else:
-        # Wyświetlanie tabeli (RAM pozostaje w tabeli)
-        st.dataframe(filtered_data, use_container_width=True)
-        
-        # Eksport do Excela
-        if st.button("Eksportuj do Excela"):
-            filtered_data.to_excel("filtrowane_produkty.xlsx", index=False)
-            st.success("Plik został zapisany jako 'filtrowane_produkty.xlsx'")
+# Tabela wyników na dole
+st.header("Wyniki filtrowania")
+if filtered_data.empty:
+    st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
+else:
+    # Wyświetlanie tabeli (RAM pozostaje w tabeli)
+    st.dataframe(filtered_data, use_container_width=True)
+    
+    # Eksport do Excela
+    if st.button("Eksportuj do Excela"):
+        filtered_data.to_excel("filtrowane_produkty.xlsx", index=False)
+        st.success("Plik został zapisany jako 'filtrowane_produkty.xlsx'")
 
 # Zamknięcie połączenia z bazą
 conn.close()
