@@ -27,15 +27,15 @@ for item in root.findall('o'):
         "url": item.get("url"),
         "price": float(item.get("price")),
         "stock": int(item.get("stock")),
-        "name": item.find("name").text,
-        "category": item.find("cat").text,
-        "ram": attrs.get("Ilość pamięci RAM"),
-        "screen_size": attrs.get("Przekątna ekranu"),
-        "resolution": attrs.get("Rozdzielczość ekranu"),
-        "processor_series": attrs.get("Seria procesora"),
-        "processor": attrs.get("Procesor"),
-        "touchscreen": attrs.get("Ekran dotykowy", "Nie"),  # Domyślna wartość "Nie"
-        "cores": attrs.get("Ilość rdzeni"),
+        "name": item.find("name").text.strip(),
+        "category": item.find("cat").text.strip(),
+        "ram": attrs.get("Ilość pamięci RAM", "").strip(),
+        "screen_size": attrs.get("Przekątna ekranu", "").strip(),
+        "resolution": attrs.get("Rozdzielczość ekranu", "").strip(),
+        "processor_series": attrs.get("Seria procesora", "").strip(),
+        "processor": attrs.get("Procesor", "").strip(),
+        "touchscreen": attrs.get("Ekran dotykowy", "Nie").strip(),
+        "cores": attrs.get("Ilość rdzeni", "").strip(),
     }
     data.append(record)
 
@@ -99,7 +99,7 @@ if processor_series != "Wszystkie":
 if processor != "Wszystkie":
     query += f" AND processor = '{processor}'"
 if touchscreen != "Wszystkie":
-    query += f" AND touchscreen = '{touchscreen}'"
+    query += f" AND TRIM(touchscreen) = '{touchscreen}'"
 if cores != "Wszystkie":
     query += f" AND cores = '{cores}'"
 
