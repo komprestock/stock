@@ -3,6 +3,7 @@ import sqlite3
 import pandas as pd
 import streamlit as st
 import xml.etree.ElementTree as ET
+import io
 
 # URL do pliku XML
 url = "https://firebasestorage.googleapis.com/v0/b/kompreshop.appspot.com/o/xml%2Fkompre.xml?alt=media"
@@ -115,10 +116,17 @@ else:
     # Wyświetlanie tabeli
     st.dataframe(filtered_data, use_container_width=True)
     
-    # Eksport do Excela
-    if st.button("Eksportuj do Excela"):
-        filtered_data.to_excel("filtrowane_produkty.xlsx", index=False)
-        st.success("Plik został zapisany jako 'filtrowane_produkty.xlsx'")
+    # Eksport do Excela (poprawiona wersja online)
+    excel_buffer = io.BytesIO()
+    filtered_data.to_excel(excel_buffer, index=False, engine="openpyxl")
+    excel_buffer.seek(0)
+
+    st.download_button(
+        label="Pobierz dane jako Excel",
+        data=excel_buffer,
+        file_name="filtrowane_produkty.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
 # Zamknięcie połączenia z bazą
 conn.close()
