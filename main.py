@@ -130,7 +130,7 @@ else:
     excel_buffer_main.seek(0)
 
     st.download_button(
-        label="Pobierz dane z głównej tabeli jako Excel",
+        label="Pobierz dane jako Excel",
         data=excel_buffer_main,
         file_name="glowna_tabela.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -159,7 +159,7 @@ if show_recommended:
         excel_buffer_recommended.seek(0)
 
         st.download_button(
-            label="Pobierz dane polecanych produktów jako Excel",
+            label="Pobierz dane jako Excel",
             data=excel_buffer_recommended,
             file_name="polecane_produkty.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
