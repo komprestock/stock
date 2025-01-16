@@ -126,14 +126,19 @@ else:
 
 # Sekcja dla polecanych produktów
 st.header("Polecane produkty")
-show_recommended = st.checkbox("Pokaż polecane produkty")
+show_recommended = st.checkbox("Pokaż/Ukryj polecane produkty")
 
 # Lista ID polecanych produktów
-recommended_ids = ['238803967', '311442840', '279877756']  # Wpisz tutaj ID polecanych produktów
+recommended_ids = ['123', '456', '789']  # Wpisz tutaj ID polecanych produktów
 
 if show_recommended:
     recommended_data = df[df['id'].isin(recommended_ids)]
     if not recommended_data.empty:
-        st.dataframe(recommended_data, use_container_width=True)
+        st.write(f"Polecane produkty ({len(recommended_data)} pozycji):")
+        st.dataframe(recommended_data[[
+            'id', 'name', 'price', 'stock', 'ram', 'processor_series',
+            'cores', 'processor', 'screen_size', 'resolution',
+            'touchscreen', 'category', 'condition', 'screen_condition', 'case_condition', 'url'
+        ]], use_container_width=True)
     else:
         st.warning("Brak polecanych produktów do wyświetlenia.")
