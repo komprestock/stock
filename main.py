@@ -168,7 +168,7 @@ if show_recommended:
         st.warning("Brak polecanych produktów do wyświetlenia.")
 
 
-"""
+'''
 # Wczytanie pliku Excel z dostawą
 try:
     dostawa_df = pd.read_excel("dostawa.xlsx")  # Zmień ścieżkę, jeśli plik znajduje się gdzie indziej
@@ -190,4 +190,4 @@ except FileNotFoundError:
     st.error("Plik 'dostawa.xlsx' nie został znaleziony. Upewnij się, że plik znajduje się w odpowiedniej lokalizacji.")
 except Exception as e:
     st.error(f"Wystąpił błąd podczas wczytywania pliku: {e}")
-"""
+'''
