@@ -111,35 +111,29 @@ if product_name:
 # Pobranie danych po zastosowaniu filtrów
 filtered_data = pd.read_sql_query(query, conn)
 
-# Tabela wyników na dole
+# Wyświetlanie wyników automatycznych
 st.header("Wyniki filtrowania")
 if filtered_data.empty:
     st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
 else:
-    # Reorganizacja kolumn w tabeli
     filtered_data = filtered_data[[
         'id', 'name', 'price', 'stock', 'ram', 'processor_series',
         'cores', 'processor', 'screen_size', 'resolution',
         'touchscreen', 'category', 'condition', 'screen_condition', 'case_condition', 'url'
     ]]
-    
-    # Wyświetlanie liczby pozycji
     st.write(f"Liczba pozycji: {len(filtered_data)}")
-    
-    # Wyświetlanie tabeli
     st.dataframe(filtered_data, use_container_width=True)
-    
-    # Eksport do Excela (poprawiona wersja online)
-    excel_buffer = io.BytesIO()
-    filtered_data.to_excel(excel_buffer, index=False, engine="openpyxl")
-    excel_buffer.seek(0)
 
-    st.download_button(
-        label="Pobierz dane jako Excel",
-        data=excel_buffer,
-        file_name="filtrowane_produkty.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+# Sekcja dla polecanych produktów
+st.header("Polecane produkty")
+show_recommended = st.checkbox("Pokaż polecane produkty")
 
-# Zamknięcie połączenia z bazą
-conn.close()
+# Lista ID polecanych produktów
+recommended_ids = ['238803967', '311442840', '279877756']  # Wpisz tutaj ID polecanych produktów
+
+if show_recommended:
+    recommended_data = df[df['id'].isin(recommended_ids)]
+    if not recommended_data.empty:
+        st.dataframe(recommended_data, use_container_width=True)
+    else:
+        st.warning("Brak polecanych produktów do wyświetlenia.")
