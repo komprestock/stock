@@ -137,7 +137,7 @@ else:
     )
 
 # Sekcja dla polecanych produktów
-st.header("Polecane produkty")
+st.header("Polecane na Styczeń i nowa dostawa")
 show_recommended = st.checkbox("Pokaż/Ukryj polecane produkty")
 
 # Lista ID polecanych produktów
