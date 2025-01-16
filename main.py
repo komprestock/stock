@@ -172,7 +172,7 @@ if show_recommended:
 # Wczytanie pliku Excel z dostawą
 try:
     dostawa_df = pd.read_excel("dostawa.xlsx")  # Zmień ścieżkę, jeśli plik znajduje się gdzie indziej
-    st.header("Tabela dostawa")
+    st.header("Oczekująca dostawa")
     st.dataframe(dostawa_df, use_container_width=True)
     
     # Eksport do Excela dla tabeli "dostawa"
@@ -181,7 +181,7 @@ try:
     excel_buffer_dostawa.seek(0)
 
     st.download_button(
-        label="Pobierz tabelę dostawa jako Excel",
+        label="Pobierz tabelę",
         data=excel_buffer_dostawa,
         file_name="tabela_dostawa.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
