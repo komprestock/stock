@@ -123,13 +123,25 @@ else:
     ]]
     st.write(f"Liczba pozycji: {len(filtered_data)}")
     st.dataframe(filtered_data, use_container_width=True)
+    
+    # Eksport do Excela dla tabeli głównej
+    excel_buffer_main = io.BytesIO()
+    filtered_data.to_excel(excel_buffer_main, index=False, engine="openpyxl")
+    excel_buffer_main.seek(0)
+
+    st.download_button(
+        label="Pobierz dane z głównej tabeli jako Excel",
+        data=excel_buffer_main,
+        file_name="glowna_tabela.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
 # Sekcja dla polecanych produktów
-st.header("Polecane na styczeń i nowe dostawy")
+st.header("Polecane produkty")
 show_recommended = st.checkbox("Pokaż/Ukryj polecane produkty")
 
 # Lista ID polecanych produktów
-recommended_ids = ['279877756', '311442840', '238803967', '230090911']  # Wpisz tutaj ID polecanych produktów
+recommended_ids = ['123', '456', '789']  # Wpisz tutaj ID polecanych produktów
 
 if show_recommended:
     recommended_data = df[df['id'].isin(recommended_ids)]
@@ -140,5 +152,17 @@ if show_recommended:
             'cores', 'processor', 'screen_size', 'resolution',
             'touchscreen', 'category', 'condition', 'screen_condition', 'case_condition', 'url'
         ]], use_container_width=True)
+
+        # Eksport do Excela dla polecanych produktów
+        excel_buffer_recommended = io.BytesIO()
+        recommended_data.to_excel(excel_buffer_recommended, index=False, engine="openpyxl")
+        excel_buffer_recommended.seek(0)
+
+        st.download_button(
+            label="Pobierz dane polecanych produktów jako Excel",
+            data=excel_buffer_recommended,
+            file_name="polecane_produkty.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
     else:
         st.warning("Brak polecanych produktów do wyświetlenia.")
