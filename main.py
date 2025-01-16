@@ -169,26 +169,25 @@ if show_recommended:
 
 
 # Wczytanie pliku Excel z dostawą
-'''
 
-try:
-    dostawa_df = pd.read_excel("dostawa.xlsx")  # Zmień ścieżkę, jeśli plik znajduje się gdzie indziej
-    st.header("Oczekująca dostawa")
-    st.dataframe(dostawa_df, use_container_width=True)
-    
-    # Eksport do Excela dla tabeli "dostawa"
-    excel_buffer_dostawa = io.BytesIO()
-    dostawa_df.to_excel(excel_buffer_dostawa, index=False, engine="openpyxl")
-    excel_buffer_dostawa.seek(0)
+# try:
+#     dostawa_df = pd.read_excel("dostawa.xlsx")  # Zmień ścieżkę, jeśli plik znajduje się gdzie indziej
+#     st.header("Oczekująca dostawa")
+#     st.dataframe(dostawa_df, use_container_width=True)
+#     
+#     # Eksport do Excela dla tabeli "dostawa"
+#     excel_buffer_dostawa = io.BytesIO()
+#     dostawa_df.to_excel(excel_buffer_dostawa, index=False, engine="openpyxl")
+#     excel_buffer_dostawa.seek(0)
+# 
+#     st.download_button(
+#         label="Pobierz tabelę",
+#         data=excel_buffer_dostawa,
+#         file_name="tabela_dostawa.xlsx",
+#         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+#     )
+# except FileNotFoundError:
+#     st.error("Plik 'dostawa.xlsx' nie został znaleziony. Upewnij się, że plik znajduje się w odpowiedniej lokalizacji.")
+# except Exception as e:
+#     st.error(f"Wystąpił błąd podczas wczytywania pliku: {e}")
 
-    st.download_button(
-        label="Pobierz tabelę",
-        data=excel_buffer_dostawa,
-        file_name="tabela_dostawa.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-except FileNotFoundError:
-    st.error("Plik 'dostawa.xlsx' nie został znaleziony. Upewnij się, że plik znajduje się w odpowiedniej lokalizacji.")
-except Exception as e:
-    st.error(f"Wystąpił błąd podczas wczytywania pliku: {e}")
-'''
