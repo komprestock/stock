@@ -168,8 +168,9 @@ if show_recommended:
         st.warning("Brak polecanych produktów do wyświetlenia.")
 
 
-'''
 # Wczytanie pliku Excel z dostawą
+'''
+
 try:
     dostawa_df = pd.read_excel("dostawa.xlsx")  # Zmień ścieżkę, jeśli plik znajduje się gdzie indziej
     st.header("Oczekująca dostawa")
