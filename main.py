@@ -125,11 +125,11 @@ else:
     st.dataframe(filtered_data, use_container_width=True)
 
 # Sekcja dla polecanych produktów
-st.header("Polecane produkty na styczeń i nowe dostawy")
+st.header("Polecane na styczeń i nowe dostawy")
 show_recommended = st.checkbox("Pokaż/Ukryj polecane produkty")
 
 # Lista ID polecanych produktów
-recommended_ids = ['279877756', '311442840', '238803967']  # Wpisz tutaj ID polecanych produktów
+recommended_ids = ['279877756', '311442840', '238803967', '230090911']  # Wpisz tutaj ID polecanych produktów
 
 if show_recommended:
     recommended_data = df[df['id'].isin(recommended_ids)]
