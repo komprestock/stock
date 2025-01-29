@@ -46,12 +46,15 @@ for item in root.findall('o'):
     
     # Dodanie wszystkich atrybutów
     for attr in all_attributes:
-        record[attr] = attrs.get(attr, "").strip()
+        record[attr] = attrs.get(attr, "Brak danych").strip() if attrs.get(attr) else "Brak danych"
     
     data.append(record)
 
 # Konwersja danych do DataFrame
 df = pd.DataFrame(data)
+
+# Uzupełnianie brakujących danych w całym DataFrame
+df.fillna("Brak danych", inplace=True)
 
 # Zapisanie danych do SQLite
 conn = sqlite3.connect("produkty.db")
