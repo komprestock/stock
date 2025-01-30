@@ -44,10 +44,7 @@ for item in root.findall('o'):
     
     # Dodanie tylko wybranych atrybutów
     for attr in selected_columns:
-        if attr in attrs:
-            record[attr] = attrs[attr].strip()
-        else:
-            record[attr] = "Brak danych"
+        record[attr] = attrs.get(attr, "Brak danych").strip() if attrs.get(attr) else "Brak danych"
 
     data.append(record)
 
@@ -57,33 +54,45 @@ df = pd.DataFrame(data)
 # Uzupełnianie brakujących danych w całym DataFrame
 df.fillna("Brak danych", inplace=True)
 
+# **Sprawdzanie rzeczywistych kolumn w DataFrame**
+existing_columns = [col for col in selected_columns if col in df.columns]
+st.write(f"Kolumny zapisane do bazy: {existing_columns}")  # Debugging
+
 # Zapisanie danych do SQLite
 conn = sqlite3.connect("produkty.db")
 df.to_sql("produkty", conn, if_exists="replace", index=False)
 conn.close()
 
-# Streamlit - interaktywna aplikacja
+# **Streamlit - interaktywna aplikacja**
 # Połączenie z bazą SQLite
 conn = sqlite3.connect("produkty.db")
 
-# Wczytanie danych z bazy, ale tylko wskazane kolumny
-query = f"SELECT {', '.join(selected_columns)} FROM produkty"
+# **Sprawdzenie istniejących kolumn w bazie przed wykonaniem zapytania**
+query = "PRAGMA table_info(produkty)"
+existing_columns_in_db = pd.read_sql_query(query, conn)["name"].tolist()
+
+# **Dopasowanie listy kolumn do tych, które rzeczywiście istnieją w bazie**
+valid_columns = [col for col in selected_columns if col in existing_columns_in_db]
+
+if not valid_columns:
+    st.error("Brak wymaganych kolumn w bazie danych!")
+    st.stop()
+
+# **Generowanie dynamicznego zapytania SQL**
+query = f"SELECT {', '.join(valid_columns)} FROM produkty"
 df = pd.read_sql_query(query, conn)
 
-# Tytuł aplikacji
+# **Tytuł aplikacji**
 st.title("Stan magazynowy kompre.pl (BETA)")
 
-# Pole do wyszukiwania nazwy produktu
+# **Pole do wyszukiwania nazwy produktu**
 product_name = st.text_input("Wpisz fragment nazwy produktu:")
 
-# Dynamiczne budowanie filtrów
-st.header("Filtry")
-
-# Pole do filtrowania kategorii
+# **Filtrowanie kategorii**
 category = st.selectbox("Kategoria", options=["Wszystkie"] + df['category'].dropna().unique().tolist())
 
-# Budowanie zapytania SQL na podstawie aktywnych filtrów
-query = f"SELECT {', '.join(selected_columns)} FROM produkty WHERE 1=1"
+# **Budowanie zapytania SQL na podstawie aktywnych filtrów**
+query = f"SELECT {', '.join(valid_columns)} FROM produkty WHERE 1=1"
 
 if category != "Wszystkie":
     query += f" AND category = '{category}'"
@@ -91,10 +100,10 @@ if category != "Wszystkie":
 if product_name:
     query += f" AND name LIKE '%{product_name}%'"
 
-# Pobranie danych po zastosowaniu filtrów
+# **Pobranie danych po zastosowaniu filtrów**
 filtered_data = pd.read_sql_query(query, conn)
 
-# Wyświetlanie wyników
+# **Wyświetlanie wyników**
 st.header("Wyniki filtrowania")
 if filtered_data.empty:
     st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
@@ -102,7 +111,7 @@ else:
     st.write(f"Liczba pozycji: {len(filtered_data)}")
     st.dataframe(filtered_data, use_container_width=True)
 
-    # Eksport do Excela
+    # **Eksport do Excela**
     excel_buffer = io.BytesIO()
     filtered_data.to_excel(excel_buffer, index=False, engine="openpyxl")
     excel_buffer.seek(0)
