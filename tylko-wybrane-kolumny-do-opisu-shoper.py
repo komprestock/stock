@@ -112,23 +112,22 @@ st.header("Wyniki filtrowania")
 if filtered_data.empty:
     st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
 else:
-    # Lista kolumn dla filtra "monitory"
+    # Lista kolumn dla widoku "monitory" w żądanej kolejności
     monitor_columns = [
-        "id", "price", "stock", "name", "category", "Ekran dotykowy", "Gwarancja",
-        "Informacje dodatkowe", "Jasność", "Kod producenta", "Kolor", "Kondycja",
-        "Kontrast", "Kąt widzenia", "Pivot", "Podświetlenie", "Powłoka matrycy",
-        "Producent", "Przekątna ekranu", "Regulacja kąta nachylenia", "Regulacja wysokości",
-        "Rozdzielczość ekranu", "Stan ekranu", "Stan obudowy", "Stopa w komplecie",
-        "Typ matrycy", "W zestawie", "Wbudowany głośnik", "Złącza zewnętrzne"
+        "id", "price", "stock", "name", "category", "Kondycja", "Producent", "Kod producenta",
+        "Stan ekranu", "Stan obudowy", "Ekran dotykowy", "Rozdzielczość ekranu", "Przekątna ekranu",
+        "Powłoka matrycy", "Podświetlenie", "Typ matrycy", "Jasność", "Kontrast", "Kąt widzenia",
+        "Stopa w komplecie", "Regulacja kąta nachylenia", "Regulacja wysokości", "Pivot",
+        "Złącza zewnętrzne", "Kolor", "Wbudowany głośnik", "Informacje dodatkowe", "W zestawie", "Gwarancja"
     ]
     
     # Wybór widoku kolumn
     preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "wszystkie"], index=0)
     
     if preset == "monitory":
-        # Dodatkowe filtrowanie - wyświetlamy tylko produkty, które mają kategorię "Monitory"
+        # Filtrowanie - wyświetlamy tylko produkty, których kategoria to "Monitory"
         filtered_data = filtered_data[filtered_data["category"] == "Monitory"]
-        # Zostawiamy tylko kolumny dla monitorów – sprawdzamy, czy dana kolumna istnieje w wyniku filtrowania.
+        # Ustawienie kolumn w żądanej kolejności (sprawdzamy, które kolumny występują w danych)
         selected_columns = [col for col in monitor_columns if col in filtered_data.columns]
     else:
         # Użytkownik może wybrać dowolne kolumny
