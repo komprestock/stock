@@ -112,13 +112,30 @@ st.header("Wyniki filtrowania")
 if filtered_data.empty:
     st.warning("Brak wyników dla wybranych filtrów. Spróbuj zmienić ustawienia filtrów.")
 else:
-    # Dodajemy widget umożliwiający wybór kolumn do wyświetlenia i pobrania
-    available_columns = list(filtered_data.columns)
-    selected_columns = st.multiselect(
-        "Wybierz kolumny do wyświetlenia i pobrania", 
-        options=available_columns, 
-        default=available_columns
-    )
+    # Lista kolumn dla filtra "monitory"
+    monitor_columns = [
+        "id", "price", "stock", "name", "category", "Ekran dotykowy", "Gwarancja",
+        "Informacje dodatkowe", "Jasność", "Kod producenta", "Kolor", "Kondycja",
+        "Kontrast", "Kąt widzenia", "Pivot", "Podświetlenie", "Powłoka matrycy",
+        "Producent", "Przekątna ekranu", "Regulacja kąta nachylenia", "Regulacja wysokości",
+        "Rozdzielczość ekranu", "Stan ekranu", "Stan obudowy", "Stopa w komplecie",
+        "Typ matrycy", "W zestawie", "Wbudowany głośnik", "Złącza zewnętrzne"
+    ]
+    
+    # Wybór widoku kolumn
+    preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "wszystkie"], index=0)
+    
+    if preset == "monitory":
+        # Zostawiamy tylko kolumny dla monitorów – sprawdzamy, czy dana kolumna istnieje w wyniku filtrowania.
+        selected_columns = [col for col in monitor_columns if col in filtered_data.columns]
+    else:
+        # Użytkownik może wybrać dowolne kolumny
+        available_columns = list(filtered_data.columns)
+        selected_columns = st.multiselect(
+            "Wybierz kolumny do wyświetlenia i pobrania", 
+            options=available_columns, 
+            default=available_columns
+        )
     
     if not selected_columns:
         st.error("Wybierz przynajmniej jedną kolumnę.")
@@ -128,12 +145,12 @@ else:
         
         st.write(f"Liczba pozycji: {len(filtered_data)}")
         st.dataframe(filtered_data, use_container_width=True)
-
+    
         # Przygotowanie pliku Excel
         excel_buffer = io.BytesIO()
         filtered_data.to_excel(excel_buffer, index=False, engine="openpyxl")
         excel_buffer.seek(0)
-
+    
         st.download_button(
             label="Pobierz dane jako Excel",
             data=excel_buffer,
