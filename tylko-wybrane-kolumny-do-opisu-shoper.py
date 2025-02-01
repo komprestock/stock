@@ -126,6 +126,8 @@ else:
     preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "wszystkie"], index=0)
     
     if preset == "monitory":
+        # Dodatkowe filtrowanie - wyświetlamy tylko produkty, które mają kategorię "Monitory"
+        filtered_data = filtered_data[filtered_data["category"] == "Monitory"]
         # Zostawiamy tylko kolumny dla monitorów – sprawdzamy, czy dana kolumna istnieje w wyniku filtrowania.
         selected_columns = [col for col in monitor_columns if col in filtered_data.columns]
     else:
