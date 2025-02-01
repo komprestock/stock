@@ -44,9 +44,9 @@ for item in root.findall('o'):
         "category": item.find("cat").text.strip(),
     }
     
-    # Dodanie wszystkich atrybutów
+    # Dodanie wszystkich atrybutów – zamiast "Brak danych" używamy "<nie dotyczy>"
     for attr in all_attributes:
-        record[attr] = attrs.get(attr, "Brak danych").strip() if attrs.get(attr) else "Brak danych"
+        record[attr] = attrs.get(attr, "<nie dotyczy>").strip() if attrs.get(attr) else "<nie dotyczy>"
     
     data.append(record)
 
@@ -54,7 +54,7 @@ for item in root.findall('o'):
 df = pd.DataFrame(data)
 
 # Uzupełnianie brakujących danych w całym DataFrame
-df.fillna("Brak danych", inplace=True)
+df.fillna("<nie dotyczy>", inplace=True)
 
 # Zapisanie danych do SQLite
 conn = sqlite3.connect("produkty.db")
@@ -125,9 +125,9 @@ else:
     preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "wszystkie"], index=0)
     
     if preset == "monitory":
-        # Filtrowanie - wyświetlamy tylko produkty, których kategoria to "Monitory"
+        # Filtrowanie – wyświetlamy tylko produkty, których kategoria to "Monitory"
         filtered_data = filtered_data[filtered_data["category"] == "Monitory"]
-        # Ustawienie kolumn w żądanej kolejności (sprawdzamy, które kolumny występują w danych)
+        # Ustawienie kolumn w żądanej kolejności (tylko te, które występują w danych)
         selected_columns = [col for col in monitor_columns if col in filtered_data.columns]
     else:
         # Użytkownik może wybrać dowolne kolumny
