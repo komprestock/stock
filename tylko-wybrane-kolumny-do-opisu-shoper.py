@@ -22,7 +22,7 @@ root = ET.fromstring(xml_data)
 # Zestaw wszystkich możliwych atrybutów
 all_attributes = set()
 
-# Pierwsza iteracja - zbieranie nazw atrybutów
+# Pierwsza iteracja – zbieranie nazw atrybutów
 for item in root.findall('o'):
     attrs = {attr.get("name") for attr in item.find("attrs").findall("a")}
     all_attributes.update(attrs)
@@ -61,7 +61,7 @@ conn = sqlite3.connect("produkty.db")
 df.to_sql("produkty", conn, if_exists="replace", index=False)
 conn.close()
 
-# Streamlit - interaktywna aplikacja
+# Streamlit – interaktywna aplikacja
 # Połączenie z bazą SQLite
 conn = sqlite3.connect("produkty.db")
 
@@ -129,6 +129,22 @@ else:
         filtered_data = filtered_data[filtered_data["category"] == "Monitory"]
         # Ustawienie kolumn w żądanej kolejności (tylko te, które występują w danych)
         selected_columns = [col for col in monitor_columns if col in filtered_data.columns]
+        
+        # Modyfikacja kolumny 'name' – budowanie nowej nazwy na podstawie wybranych atrybutów
+        def build_monitor_name(row):
+            cols = ["Producent", "Kod producenta", "Przekątna ekranu", "Typ matrycy", "Rozdzielczość ekranu"]
+            parts = []
+            for col in cols:
+                value = row.get(col, "<nie dotyczy>")
+                if value and value != "<nie dotyczy>":
+                    parts.append(value)
+            if parts:
+                return "Monitor " + " ".join(parts)
+            else:
+                return row["name"]
+
+        filtered_data["name"] = filtered_data.apply(build_monitor_name, axis=1)
+        
     else:
         # Użytkownik może wybrać dowolne kolumny
         available_columns = list(filtered_data.columns)
