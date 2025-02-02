@@ -129,12 +129,15 @@ else:
     
     # Lista kolumn dla widoku "części laptopowe"
     laptop_parts_columns = [
-        "Kondycja", "Model", "Rodzaj", "Przeznaczenie", "Napięcie", "Pojemność", 
-        "Gwarancja", "Typ", "Moc", "Informacje dodatkowe", "W zestawie"
+        "id", "price", "stock", "name", "category", "Kondycja", "Model",
+        "Rodzaj", "Przeznaczenie", "Napięcie", "Pojemność", "Gwarancja",
+        "Typ", "Moc", "Informacje dodatkowe", "W zestawie"
     ]
     
-    # Wybór widoku kolumn – dodano nową opcję "części laptopowe"
-    preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "części komputerowe", "części laptopowe", "wszystkie"], index=0)
+    # Wybór widoku kolumn – dodano opcję "części laptopowe"
+    preset = st.selectbox("Wybierz widok kolumn", 
+                           options=["monitory", "części komputerowe", "części laptopowe", "wszystkie"], 
+                           index=0)
     
     if preset == "monitory":
         # Filtrowanie – wyświetlamy tylko produkty, których kategoria to "Monitory"
