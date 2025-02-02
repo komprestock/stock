@@ -121,8 +121,14 @@ else:
         "Złącza zewnętrzne", "Kolor", "Wbudowany głośnik", "Informacje dodatkowe", "W zestawie", "Gwarancja"
     ]
     
-    # Wybór widoku kolumn
-    preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "wszystkie"], index=0)
+    # Lista kolumn dla widoku "części komputerowe"
+    computer_parts_columns = [
+        "id", "price", "stock", "name", "category", "Kondycja", "Kod producenta",
+        "Rodzaj", "Przeznaczenie", "Typ", "Napięcie", "Pojemność", "Gwarancja"
+    ]
+    
+    # Wybór widoku kolumn – dodano nową opcję "części komputerowe"
+    preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "części komputerowe", "wszystkie"], index=0)
     
     if preset == "monitory":
         # Filtrowanie – wyświetlamy tylko produkty, których kategoria to "Monitory"
@@ -144,9 +150,15 @@ else:
                 return row["name"]
 
         filtered_data["name"] = filtered_data.apply(build_monitor_name, axis=1)
-        
+    
+    elif preset == "części komputerowe":
+        # Filtrowanie – wyświetlamy tylko produkty, których kategoria to "Części komputerowe"
+        filtered_data = filtered_data[filtered_data["category"] == "Części komputerowe"]
+        # Ustawienie kolumn zgodnie z listą dla części komputerowych
+        selected_columns = [col for col in computer_parts_columns if col in filtered_data.columns]
+    
     else:
-        # Użytkownik może wybrać dowolne kolumny
+        # Użytkownik wybiera dowolne kolumny
         available_columns = list(filtered_data.columns)
         selected_columns = st.multiselect(
             "Wybierz kolumny do wyświetlenia i pobrania", 
