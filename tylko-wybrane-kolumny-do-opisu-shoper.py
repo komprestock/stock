@@ -121,15 +121,20 @@ else:
         "Złącza zewnętrzne", "Kolor", "Wbudowany głośnik", "Informacje dodatkowe", "W zestawie", "Gwarancja"
     ]
     
-    # Zaktualizowana lista kolumn dla widoku "części komputerowe"
+    # Lista kolumn dla widoku "części komputerowe"
     computer_parts_columns = [
-        "id", "price", "stock", "name", "category",
-        "Kondycja", "Model", "Rodzaj", "Przeznaczenie", "Napięcie",
-        "Pojemność", "Gwarancja", "Typ", "Moc", "Informacje dodatkowe", "W zestawie"
+        "id", "price", "stock", "name", "category", "Kondycja", "Kod producenta",
+        "Rodzaj", "Przeznaczenie", "Typ", "Napięcie", "Pojemność", "Gwarancja"
     ]
     
-    # Wybór widoku kolumn – dodano opcję "części komputerowe"
-    preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "części komputerowe", "wszystkie"], index=0)
+    # Lista kolumn dla widoku "części laptopowe"
+    laptop_parts_columns = [
+        "Kondycja", "Model", "Rodzaj", "Przeznaczenie", "Napięcie", "Pojemność", 
+        "Gwarancja", "Typ", "Moc", "Informacje dodatkowe", "W zestawie"
+    ]
+    
+    # Wybór widoku kolumn – dodano nową opcję "części laptopowe"
+    preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "części komputerowe", "części laptopowe", "wszystkie"], index=0)
     
     if preset == "monitory":
         # Filtrowanie – wyświetlamy tylko produkty, których kategoria to "Monitory"
@@ -155,8 +160,14 @@ else:
     elif preset == "części komputerowe":
         # Filtrowanie – wyświetlamy tylko produkty, których kategoria to "Części komputerowe"
         filtered_data = filtered_data[filtered_data["category"] == "Części komputerowe"]
-        # Ustawienie kolumn zgodnie z nową listą dla części komputerowych
+        # Ustawienie kolumn zgodnie z listą dla części komputerowych
         selected_columns = [col for col in computer_parts_columns if col in filtered_data.columns]
+    
+    elif preset == "części laptopowe":
+        # Filtrowanie – wyświetlamy tylko produkty, których kategoria to "Części laptopowe"
+        filtered_data = filtered_data[filtered_data["category"] == "Części laptopowe"]
+        # Ustawienie kolumn zgodnie z listą dla części laptopowych
+        selected_columns = [col for col in laptop_parts_columns if col in filtered_data.columns]
     
     else:
         # Użytkownik wybiera dowolne kolumny
