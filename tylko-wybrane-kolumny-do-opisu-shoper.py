@@ -121,13 +121,14 @@ else:
         "Złącza zewnętrzne", "Kolor", "Wbudowany głośnik", "Informacje dodatkowe", "W zestawie", "Gwarancja"
     ]
     
-    # Lista kolumn dla widoku "części komputerowe"
+    # Zaktualizowana lista kolumn dla widoku "części komputerowe"
     computer_parts_columns = [
-        "id", "price", "stock", "name", "category", "Kondycja", "Kod producenta",
-        "Rodzaj", "Przeznaczenie", "Typ", "Napięcie", "Pojemność", "Gwarancja"
+        "id", "price", "stock", "name", "category",
+        "Kondycja", "Model", "Rodzaj", "Przeznaczenie", "Napięcie",
+        "Pojemność", "Gwarancja", "Typ", "Moc", "Informacje dodatkowe", "W zestawie"
     ]
     
-    # Wybór widoku kolumn – dodano nową opcję "części komputerowe"
+    # Wybór widoku kolumn – dodano opcję "części komputerowe"
     preset = st.selectbox("Wybierz widok kolumn", options=["monitory", "części komputerowe", "wszystkie"], index=0)
     
     if preset == "monitory":
@@ -154,7 +155,7 @@ else:
     elif preset == "części komputerowe":
         # Filtrowanie – wyświetlamy tylko produkty, których kategoria to "Części komputerowe"
         filtered_data = filtered_data[filtered_data["category"] == "Części komputerowe"]
-        # Ustawienie kolumn zgodnie z listą dla części komputerowych
+        # Ustawienie kolumn zgodnie z nową listą dla części komputerowych
         selected_columns = [col for col in computer_parts_columns if col in filtered_data.columns]
     
     else:
